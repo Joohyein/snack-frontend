@@ -3,33 +3,29 @@ import SockJS from 'sockjs-client';
 import * as StompJs from "@stomp/stompjs";
 import Stomp from 'stompjs';
 import { useEffect } from 'react';
-import SideBar from '../SideBar/SideBar';
 import styled from 'styled-components';
-import { 
-  Container,
-  StContainer, 
-  StHeader,
-  StIconBox,
-  StMsgBox,
-  StMsgContainer,
-  StIconBoxBottom,
-  StLeft,
-  StSend,
-  StChatContainer,
-  StChatbox,
-  StProfile,
-  StNameMsgBox,
-  StName,
-  StContent,
-  StInput,
-  StChatBoxContainer,
-  StSendTrue,
-  StSendIcon,
-} from './ChatStyled'
+import { StTitle } from '../SideBar/SideBarStyled';
+import {Container,StContainer,StHeader,StIconBox,StMsgBox,  StMsgContainer,  StIconBoxBottom,  StLeft,  StSend,  StChatContainer,  StChatbox,StProfile,StNameMsgBox,StName,StContent,StInput,StChatBoxContainer,StSendTrue,StSendIcon,} from './ChatStyled'
 import {BiBold, BiItalic, BiSend, BiStrikethrough, BiAt, BiSmile, BiLink, BiListOl, BiListUl, BiCodeAlt, BiMicrophone, BiCodeBlock, BiPlusCircle, BiVideo} from "react-icons/bi";
+import { 
+  StChannel, 
+  StContainerSide, 
+  StDmBox, 
+  StHeaderSide, 
+  StIconArrow,
+  StIconToggleOpen,
+  StIconToggleClose,
+  StNameSide, 
+  StTitleChDm,
+  StTitleBox,
+} from '../SideBar/SideBarStyled';
+import { useQuery } from 'react-query';
+import { getDMList, getPrevChat } from '../../../axios/api';
+
 
 function Chat() {
   // const client = useRef({}); // 속성 값이 변경되어도 재렌더링하지 않고, 다시 렌더링 하더라도 유실되지 않도록 클리이언트를 current속성에 만든다.
+  const {isLoading, isError, data} = useQuery("listDm", getDMList);
   
   const [isChat, setIsChat] = useState(true);  // 초깃값: 메인화면(false), 채팅시작(true) - 방을 클릭했을 때 변경
   const [messages, setMessages] = useState([]);  // 화면에 표시될 채팅 기록
@@ -39,6 +35,16 @@ function Chat() {
   const [uuid, setUuid] = useState("");
 
   const [roomNum, setRoomNum] = useState();
+
+  const [toggleCh, setToggleCh] = useState(false);
+  const [toggleDm, setToggleDm] = useState(false);
+
+  const onClickToggleChHandler = () => {
+    setToggleCh(!toggleCh);
+  }
+  const onClickToggleDmHandler = () => {
+    setToggleDm(!toggleDm);
+  }
 
   useEffect(()=>{
     const socket = new SockJS(`${process.env.REACT_APP_URL}/stomp/chat`);
@@ -65,9 +71,7 @@ function Chat() {
   
   const onSubmitHandler = (e) => {
     e.preventDefault();
-
     // if(!stompClient.current.connected) return;  // 연결이 끊겼을 때
-
     // console.log("messages typeof : ", typeof(messages));
     // const username = 'testname'; // 질문
     const username = localStorage.getItem('nickname'); 
@@ -76,7 +80,7 @@ function Chat() {
       dmId: roomNum,
       username, 
       message: inputMsg,
-      uuid:"uuid"
+      uuid: roomNum,
     }
 
     if(inputMsg) {
@@ -97,7 +101,68 @@ function Chat() {
   return (
     <StContainer>
       <StSideBarBox>
-        <SideBar setRoomNum={setRoomNum} />
+        <StContainerSide>
+          <StHeaderSide>
+            <StNameSide>HangHae99</StNameSide>
+            <StIconArrow />
+          </StHeaderSide>
+
+          <StChannel>
+            <StTitleBox>
+              {
+                toggleCh
+                  ? 
+                    <>
+                      <StTitleChDm onClick={onClickToggleChHandler}>
+                        <StIconToggleOpen />
+                        <h3>채널</h3>
+                      </StTitleChDm>
+                      {/* <ChannelList /> */}
+
+                    </>
+                  :  
+                    <StTitleChDm onClick={onClickToggleChHandler}>
+                      <StIconToggleClose />
+                      <h3>채널</h3>
+                    </StTitleChDm>
+              }
+            </StTitleBox>
+          </StChannel>
+
+          <StDmBox>
+            <StTitleBox>
+              {
+                toggleDm
+                  ? 
+                    <>
+                      <StTitleChDm onClick={onClickToggleDmHandler}>
+                        <StIconToggleOpen />
+                        <h3>다이렉트 메시지</h3>
+                      </StTitleChDm>
+                      {
+                        data.map((item)=>{
+                          return <StContainerBox>
+                          <StImg src='https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' />
+                          <StState></StState>
+                          <StTitle
+                            key={item.id} 
+                            onClick={()=>setRoomNum(item.id)}
+                            >{item.title}
+                          </StTitle>
+                        </StContainerBox>
+                        })
+                      }
+
+                    </>
+                  :  
+                    <StTitleChDm onClick={onClickToggleDmHandler}>
+                      <StIconToggleClose />
+                      <h3>다이렉트 메시지</h3>
+                    </StTitleChDm>
+              }
+            </StTitleBox>
+          </StDmBox>
+        </StContainerSide>
       </StSideBarBox>
       {
         isChat 
@@ -198,4 +263,26 @@ const StSideBarBox = styled.div`
   @media screen and (max-width:800px) {
     display: none;
   }
+`;
+
+const StContainerBox = styled.div`
+  display: flex;
+  align-items: center;
+  gap:8px;
+  position: relative;
+`;
+const StState = styled.div`
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #2AAC76;
+  position: absolute;
+  top:12px;
+  left: 12px;
+  border: 2px solid #19171D;
+`;
+const StImg = styled.img`
+  width: 20px;
+  height: 20px;
+  border-radius: 2px;
 `;

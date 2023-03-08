@@ -2,14 +2,14 @@ import styled from "styled-components";
 import {IoIosArrowDown} from "react-icons/io";
 import {VscTriangleDown, VscTriangleUp} from "react-icons/vsc";
 
-const StContainer = styled.div`
+const StContainerSide = styled.div`
     width: 100%;
     height: 100%;
     background-color: #19171D;
     box-sizing: border-box;
     border-right: 0.01px solid #363636;
 `;
-const StHeader = styled.div`
+const StHeaderSide = styled.div`
     padding: 16px 14px;
     border-bottom: 0.01px solid #363636;
     display: flex;
@@ -17,7 +17,7 @@ const StHeader = styled.div`
     gap: 2px;
     justify-content: start;
 `;
-const StName = styled.h3`
+const StNameSide = styled.h3`
     color: #D1D2D3;
     font-weight: 800;
     margin: 0px;
@@ -73,9 +73,9 @@ const StTitleBox = styled.div`
 `;
 
 export {
-    StContainer,
-    StHeader,
-    StName,
+    StContainerSide,
+    StHeaderSide,
+    StNameSide,
     StIconArrow,
     StChannel,
     StTitle,

@@ -2,7 +2,7 @@ import axios from "axios";
 import { getCookie } from "../cookies/cookies";
 
 const instance = axios.create({
-    baseURL: `${process.env.REACT_APP_YUN_BASE_URL}`,
+    baseURL: `${process.env.REACT_APP_URL}`,
     withCredentials: true
 });
 
@@ -21,11 +21,11 @@ instance.interceptors.request.use(
 // 디엠 바 조회
 const getDMList = async () => {
     const response = await instance.get("/api/dm");
-    // console.log('dm response', response);
+    // console.log('dm response', response);w
     return response.data;
 };
 
-// 채널 바 조회(url channel로 변경하기)
+// 채널 바 조회
 const getChannelList = async () => {
     const response = await instance.get("/api/channel");
     console.log('channel response', response)

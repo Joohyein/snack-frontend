@@ -4,12 +4,16 @@ import { getDMList, getPrevChat } from '../../../axios/api';
 import { StTitle } from './SideBarStyled';
 import styled from 'styled-components';
 
-function DmList({setRoomNum}) {
+function DmList({setRoom}) {
   const {isLoading, isError, data} = useQuery("listDm", getDMList);
-  const {isLoading:isLoadingChat, isError:isErrorChat, data:dataChat} = useQuery("chat", getPrevChat(data.uuid));
+  // const {isLoading:isLoadingChat, isError:isErrorChat, data:dataChat} = useQuery("chat", getPrevChat(data.uuid));
   
   // console.log("dataChat", dataChat);
-  console.log("data", data);
+  // console.log("data", data);
+
+  const onClickRoomHandler = (id) => {
+    setRoom = id;
+  };
 
   if(isLoading) return <h3>Loading...</h3>
   if(isError) return <h3>Error...</h3>
@@ -23,7 +27,7 @@ function DmList({setRoomNum}) {
           <StState></StState>
           <StTitle
             key={item.id} 
-            onClick={()=>setRoomNum(item.id)}
+            onClick={()=>onClickRoomHandler(item.id)}
             >{item.title}
           </StTitle>
         </StContainer>
